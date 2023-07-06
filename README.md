@@ -9,3 +9,5 @@ The RIDEKC bus system does not provide people with a way to track the busses, or
 To track the busses I came up with the solution of using an ESP32 to detect when the RIDEKC free bus WiFi is nearby, and then sending a PUT request to a server to create a file containing information about board status and arrival time.
 
 The ESP32 will be enclosed in some sort of case with a source of power. This case will be designed specifically for where we place it and will be included here
+
+To compile this code, you will need to use platformio. I used conda and pip to install the cli version, but you can use the VS Code plugin as well.
