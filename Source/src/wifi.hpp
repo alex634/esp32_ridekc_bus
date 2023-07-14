@@ -36,6 +36,46 @@ void wifi_disconnect_From_SSID() {
        	logs_println("wifi_disconnect_From_SSID(): Disconnected from SSID");
 }
 
+void wifi_log_Status() {
+	switch (WiFi.status()) {
+		case WL_CONNECTED:
+		logs_println("wifi_log_Status(): WL_CONNECTED");
+		break;
+
+		case WL_NO_SHIELD:
+		logs_println("wifi_log_Status(): WL_NO_SHIELD");
+		break;
+
+		case WL_IDLE_STATUS:
+		logs_println("wifi_log_Status(): WL_IDLE_STATUS");
+		break;
+
+		case WL_CONNECT_FAILED:
+		logs_println("wifi_log_Status(): WL_CONNECT_FAILED");
+		break;
+
+		case WL_NO_SSID_AVAIL:
+		logs_println("wifi_log_Status(): WL_NO_SSID_AVAIL");
+		break;
+
+		case WL_SCAN_COMPLETED:
+		logs_println("wifi_log_Status(): WL_SCAN_COMPLETED");
+		break;
+
+		case WL_CONNECTION_LOST:
+		logs_println("wifi_log_Status(): WL_CONNECTION_LOST");
+		break;
+
+		case WL_DISCONNECTED:
+		logs_println("wifi_log_Status(): WL_DISCONNECTED");
+		break;
+
+		default:
+		logs_println("wifi_log_Status(): Unknown value returned by WiFi.status()");
+		break;
+	}
+}
+
 void wifi_connect_To_SSID(struct wifi_Connection_Request request) {
 	wifi_disconnect_From_SSID();
 
@@ -49,7 +89,7 @@ void wifi_connect_To_SSID(struct wifi_Connection_Request request) {
 			break;
 			
 			case WPA2_PSK:
-				logs_print("wifi_connect_To_SSID(): Attempting WPA2 connection to: ");
+				logs_print("wifi_connect_To_SSID(): Attempting WPA2 PSK connection to: ");
 				logs_println(((struct wifi_WPA2_PSK_Secrets *) request.secrets)->ssid);
 				
 				WiFi.begin( ( (struct wifi_WPA2_PSK_Secrets *) request.secrets)->ssid, ( (struct wifi_WPA2_PSK_Secrets *) request.secrets)->password );
@@ -67,6 +107,7 @@ void wifi_connect_To_SSID(struct wifi_Connection_Request request) {
 			break;
 		}
 		delay(10000);
+		wifi_log_Status();
 	}
 	
 

@@ -29,6 +29,7 @@ void setup() {
 	//This is so we don't miss boot messages
 	delay(5000);
 	fs_vars_mount_Filesystem();
+	
 	logs_initialize_Logs(fs_vars_debug_Mode_Enabled());
 	logs_println("Initialized Logging");
 	fs_vars_load_Misc_Vars();
@@ -45,13 +46,12 @@ void enter_Deep_Sleep_If_Ready() {
 		esp_sleep_enable_timer_wakeup(fs_vars_m_Vars.DEEP_SLEEP_HOURS * 3600ULL * 1000000ULL);
 		
 		logs_println("enter_Deep_Sleep_If_Ready(): Entering deep sleep now...");
+		logs_deinitialize_Logs();
+		fs_vars_free_Misc_Vars();
 		
 		esp_deep_sleep_start();
 		
-		logs_println("enter_Deep_Sleep_If_Ready(): Waking up from deep sleep now...");
 		
-		sync_Time_Necessary = true;
-		return;
 	}
 	
 	logs_println("enter_Deep_Sleep_If_Ready(): Deep sleep was not necessary");
@@ -111,6 +111,7 @@ bool sync_Time() {
 	if (try_Count > 10) {
 		
 		logs_println("sync_Time(): Time syncing failed");
+		http.stop();
 		return false;
 		
 	}
@@ -125,7 +126,7 @@ bool sync_Time() {
 	if (status_Code >= 400 && status_Code < 500) {
 		
 		logs_println("sync_Time(): HTTP error code");	
-		
+		http.stop();
 		return false;
 	}
 	
@@ -151,14 +152,17 @@ bool sync_Time() {
 	if (u_Time == -1) {
 		logs_println("sync_Time(): Failed to sync, couldn't find time string");
 		delete response_Mutable;
+		http.stop();
 		return false;
 	}
 
 	logs_println("sync_Time(): Setting esp32 RTC");
 	esp_Time.setTime(u_Time);
+	logs_enable_Rtc(esp_Time);
 
 	delete response_Mutable;
-
+	
+	http.stop();
 	return true;
 }
 
@@ -190,13 +194,14 @@ const char * get_Status_String() {
 }
 
 void announce_Bus_Arrival() {
+	wifi_connect_To_Communication_Wifi();
+
 	WiFiClient w_Client;
 	HttpClient http = HttpClient(w_Client, fs_vars_m_Vars.COMMUN_SERVER, fs_vars_m_Vars.COMMUN_SERVER_PORT);
 	
 	unsigned long arrival_Time = esp_Time.getEpoch();
 
-	logs_print("announce_Bus_Arrival(): Bus arrival time in Unix Time: ");
-	logs_println(String(arrival_Time));
+	logs_println("announce_Bus_Arrival(): Getting bus arrival time from rtc ");
 	
 	String time_String = String(arrival_Time);
 	String filename = "/" + time_String + ".txt";
@@ -209,6 +214,7 @@ void announce_Bus_Arrival() {
 	logs_println(String(status_Code));
 
 	logs_println("announce_Bus_Arrival(): Posted to server");
+	http.stop();
 	return;
 }
 
