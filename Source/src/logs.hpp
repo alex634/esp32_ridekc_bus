@@ -18,7 +18,6 @@ void logs_enable_Rtc(ESP32Time e_Time) {
 }
 
 void logs_initialize_Logs(bool debug) {
-	Serial.begin(9600);
 	if (SPIFFS.exists("/LOGS/PREVIOUS")) SPIFFS.remove("/LOGS/PREVIOUS");
 	if (SPIFFS.exists("/LOGS/CURRENT")) SPIFFS.rename("/LOGS/CURRENT", "/LOGS/PREVIOUS");
 	logs_file_Handle = SPIFFS.open("/LOGS/CURRENT", FILE_WRITE);

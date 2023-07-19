@@ -100,10 +100,11 @@ void wifi_connect_To_SSID(struct wifi_Connection_Request request) {
 				esp_wifi_sta_wpa2_ent_set_username( (unsigned char *) ( (struct wifi_WPA2_Enterprise_Secrets *) request.secrets)->username, strlen(( (struct wifi_WPA2_Enterprise_Secrets *) request.secrets)->username));
 				esp_wifi_sta_wpa2_ent_set_password( (unsigned char *) ( (struct wifi_WPA2_Enterprise_Secrets *) request.secrets)->password, strlen(( (struct wifi_WPA2_Enterprise_Secrets *) request.secrets)->password));
 				esp_wifi_sta_wpa2_ent_enable();
-				WiFi.begin(((struct wifi_WPA2_Enterprise_Secrets *) (request.secrets))->ssid );
-
+				
 				logs_print("wifi_connect_To_SSID(): Attempting WPA2 Enterprise connection to: ");
 				logs_println(((struct wifi_WPA2_Enterprise_Secrets *) (request.secrets))->ssid);
+				WiFi.begin(((struct wifi_WPA2_Enterprise_Secrets *) (request.secrets))->ssid );
+
 			break;
 		}
 		delay(10000);
@@ -202,7 +203,9 @@ void wifi_connect_To_Debug_Wifi() {
 
 		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving username");
 		secrets.username = fs_vars_get_Contents("WIFI", "DBG_COMMUN_USERNAME", true);
-
+		
+		connection_Request.secrets = (void *) &secrets;
+		
 		wifi_connect_To_SSID(connection_Request);
 		delete secrets.ssid;
 		delete secrets.password;
@@ -262,6 +265,8 @@ void wifi_connect_To_Normal_Wifi() {
 		secrets.username = fs_vars_get_Contents("WIFI", "COMMUN_USERNAME", true);
 
 		wifi_connect_To_SSID(connection_Request);
+		logs_println(secrets.username);
+		Serial.flush();
 		delete secrets.ssid;
 		delete secrets.password;
 		delete secrets.username;
