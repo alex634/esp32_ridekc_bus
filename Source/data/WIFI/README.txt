@@ -9,24 +9,10 @@ COMMUN_WPA2 - Communication network uses WPA2
 COMMUN_WPA2_PSK - Communication network uses WPA2 with password
 COMMUN_WPA2_ENTERPRS - Communication network uses WPA2 Enterprise
 
-DBG_COMMUN_WPA2 - Testing device acting as the communication
-network uses WPA2
-DBG_COMMUN_WPA2_PSK - Testing device acting as communication network
-uses WPA2 with password
-DBG_COMMUN_WPA2_ENTERPRS - Testing communication network uses WPA2 Enterprise
-
 Contains Data:
 COMMUN_SSID - Contains the network SSID of the communication
 network
 COMMUN_PASSWORD - Wireless password for commnunication network
 COMMUN_USERNAME - Username for Wireless if using WPA2 Enterprise
 
-DBG_COMMUN_SSID - Contains the network SSID of the testing device acting
-as the communication network
-DBG_COMMUN_PASSWORD - Contains the password for the testing device acting
-as the communication network
-DBG_COMMUN_USERNAME - Contains the username for wireless if using WPA2
-Enterprise
-
-DBG_BUS_SSID - Contains the network SSID of the test bus network
 BUS_SSID - Contains the network SSID of the bus

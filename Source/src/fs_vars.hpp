@@ -90,10 +90,6 @@ void fs_vars_set_Contents(const char * var_Domain, const char * var_Name, char *
 	return;
 }
 
-inline bool fs_vars_debug_Mode_Enabled() {
-	return fs_vars_get_Enabled("DEBUG", "ENABLED");
-}
-
 void fs_vars_load_Misc_Vars() {
 	logs_println("fs_vars_load_Misc_Vars(): Loading struct fs_vars_misc_Vars");
 	

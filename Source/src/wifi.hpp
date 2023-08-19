@@ -153,67 +153,7 @@ bool wifi_is_SSID_Present(const String ssid) {
         return false;
 }
 
-void wifi_connect_To_Debug_Wifi() {
-	struct wifi_Connection_Request connection_Request;
-	
-	if (fs_vars_get_Enabled("WIFI", "DBG_COMMUN_WPA2")) {
-		struct wifi_WPA2_Secrets secrets;
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Settings indicate WPA2 without PSK");
-		connection_Request.c_Type = WPA2_NO_PSK;
-		
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving ssid");
-		secrets.ssid = fs_vars_get_Contents("WIFI", "DBG_COMMUN_SSID", true);
-
-		connection_Request.secrets = (void *) &secrets;
-
-		wifi_connect_To_SSID(connection_Request);
-		delete secrets.ssid;
-
-	} else if (fs_vars_get_Enabled("WIFI", "DBG_COMMUN_WPA2_PSK")) {
-		struct wifi_WPA2_PSK_Secrets secrets;
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Settings indicate WPA2 with PSK");
-		connection_Request.c_Type = WPA2_PSK;
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving password");
-		secrets.ssid = fs_vars_get_Contents("WIFI", "DBG_COMMUN_SSID", true);
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving password");
-		secrets.password = fs_vars_get_Contents("WIFI", "DBG_COMMUN_PASSWORD", true);
-
-		connection_Request.secrets = (void *) &secrets;
-
-		wifi_connect_To_SSID(connection_Request);
-		delete secrets.ssid;
-		delete secrets.password;
-
-
-	} else if (fs_vars_get_Enabled("WIFI", "DBG_COMMUN_WPA2_ENTERPRS")) {
-		struct wifi_WPA2_Enterprise_Secrets secrets;
-		
-		logs_println("wifi_connect_To_Debug_Wifi(): Settings indicate WPA2 Enterprise");
-		connection_Request.c_Type = WPA2_ENTERPRISE;
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving ssid");
-		secrets.ssid = fs_vars_get_Contents("WIFI", "DBG_COMMUN_SSID", true);
-		
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving password");
-		secrets.password = fs_vars_get_Contents("WIFI", "DBG_COMMUN_PASSWORD", true);
-
-		logs_println("wifi_connect_To_Debug_Wifi(): Retrieving username");
-		secrets.username = fs_vars_get_Contents("WIFI", "DBG_COMMUN_USERNAME", true);
-		
-		connection_Request.secrets = (void *) &secrets;
-		
-		wifi_connect_To_SSID(connection_Request);
-		delete secrets.ssid;
-		delete secrets.password;
-		delete secrets.username;
-	}
-}
-
-void wifi_connect_To_Normal_Wifi() {
+void wifi_connect_To_Wifi() {
 	struct wifi_Connection_Request connection_Request;
 	
 	if (fs_vars_get_Enabled("WIFI", "COMMUN_WPA2")) {
@@ -263,9 +203,11 @@ void wifi_connect_To_Normal_Wifi() {
 
 		logs_println("wifi_connect_To_Normal_Wifi(): Retrieving username");
 		secrets.username = fs_vars_get_Contents("WIFI", "COMMUN_USERNAME", true);
-
-		wifi_connect_To_SSID(connection_Request);
 		logs_println(secrets.username);
+		
+		connection_Request.secrets = (void *) &secrets;
+		
+		wifi_connect_To_SSID(connection_Request);
 		Serial.flush();
 		delete secrets.ssid;
 		delete secrets.password;
@@ -273,14 +215,7 @@ void wifi_connect_To_Normal_Wifi() {
 	}
 }
 
-bool wifi_is_Debug_Bus_Present() {
-	char * debug_bus_SSID = fs_vars_get_Contents("WIFI", "DBG_BUS_SSID", true);
-	bool present = wifi_is_SSID_Present(debug_bus_SSID);
-	delete debug_bus_SSID;
-	return present;
-}
-
-bool wifi_is_Normal_Bus_Present() {
+bool wifi_is_Bus_Present() {
 	char * bus_SSID = fs_vars_get_Contents("WIFI", "BUS_SSID", true);
 	bool present = wifi_is_SSID_Present(bus_SSID);
 	delete bus_SSID;
@@ -288,23 +223,13 @@ bool wifi_is_Normal_Bus_Present() {
 }
 
 bool wifi_bus_Wifi_Present() {
-	if (fs_vars_debug_Mode_Enabled()) {
-		logs_println("wifi_bus_Wifi_Present(): Attempting to find debug bus wifi");
-		return wifi_is_Debug_Bus_Present();
-	}
-
-	logs_println("wifi_bus_Wifi_Present(): Attempting to find normal bus wifi");
-	return wifi_is_Normal_Bus_Present();
+	logs_println("wifi_bus_Wifi_Present(): Attempting to find bus wifi");
+	return wifi_is_Bus_Present();
 }
 
 void wifi_connect_To_Communication_Wifi() {
-	if (fs_vars_debug_Mode_Enabled()) {
-		logs_println("wifi_connect_To_Communication_Wifi(): Attempting to connect to debug communication wifi");
-		return wifi_connect_To_Debug_Wifi();
-	}
-
 	logs_println("wifi_connect_To_Communication_Wifi(): Attempting to connect to communication wifi");
-	return wifi_connect_To_Normal_Wifi();
+	return wifi_connect_To_Wifi();
 }
 
 

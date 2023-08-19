@@ -30,7 +30,7 @@ void setup() {
 	delay(5000);
 	fs_vars_mount_Filesystem();
 	
-	logs_initialize_Logs(fs_vars_debug_Mode_Enabled());
+	logs_initialize_Logs();
 	logs_println("Initialized Logging");
 	fs_vars_load_Misc_Vars();
 
@@ -46,7 +46,6 @@ void enter_Deep_Sleep_If_Ready() {
 		esp_sleep_enable_timer_wakeup(fs_vars_m_Vars.DEEP_SLEEP_HOURS * 3600ULL * 1000000ULL);
 		
 		logs_println("enter_Deep_Sleep_If_Ready(): Entering deep sleep now...");
-		logs_deinitialize_Logs();
 		fs_vars_free_Misc_Vars();
 		
 		esp_deep_sleep_start();
@@ -229,5 +228,5 @@ void loop() {
 
 	if (wifi_bus_Wifi_Present()) announce_Bus_Arrival();
 	
-	enter_Deep_Sleep_If_Ready();
+	//enter_Deep_Sleep_If_Ready();
 }
