@@ -1,13 +1,15 @@
 # ESP32_RIDEKC_BUS
 
-## Preface
+## What does this do
 
-The RIDEKC bus system does not provide people with a way to track the busses, or at least a working way. This would not be an issue if the busses were consistent, but unfortunately they are not. 
+This code allows for someone to determine when a bus is in close proximity to a ESP32. The ESP32 waits until it sees a bus Wifi hotspot and then connects to another Wifi nearby (in my case, a university network). It then issues a PUT request to a server to upload a file with the current UNIX time as the name of the file and "BUS ARRIVED..." as the content. This PUT request serves to indicate when a bus arrives.
 
-## Solution
+## How to Use it
 
-To track the busses I came up with the solution of using an ESP32 to detect when the RIDEKC free bus WiFi is nearby, and then sending a PUT request to a server to create a file containing information about board status and arrival time.
+### Flashing Code / Editing Source
 
-The ESP32 will be enclosed in some sort of case with a source of power. This case will be designed specifically for where we place it and will be included here
+The documentation for the following is located here: [Documentation](FLASHING_CODE_README.md)
 
-To compile this code, you will need to use platformio. I used conda and pip to install the cli version, but you can use the VS Code plugin as well.
+### Filesystem Variables
+
+The ESP32 reads files on its onboard flash to determine which networks to connect to amongst other things. There will be more documentation released soon on how to set these variables. For now, you will have to use the README files in "Source/data/WIFI" and "Source/data/MISC" to determine how to set these correctly. Keep in mind that most text editors add newlines to the end. You will need to make sure to remove these with `truncate -s -1 <filename>` if your text editor does this.
